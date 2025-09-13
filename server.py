@@ -1,7 +1,9 @@
 import os
 from flask import Flask
 from flasgger import Swagger
+
 from database.db import db
+from routes.routes import register_routes
 
 def create_app(test_config=None):
     app = Flask(__name__)
@@ -31,6 +33,8 @@ def create_app(test_config=None):
         app.config.update(test_config)
 
     db.init_app(app)
+
+    register_routes(app)
 
     swagger = Swagger(app)
 
