@@ -31,8 +31,10 @@ def login():
             }
         )
 
+        name = user.name.split(" ")[0].title()
+
         response = jsonify({
-            "message": f"Olá, {user.name.title()}! Seja bem-vindo ao Prioriza!",
+            "message": f"Olá, {name}! Seja bem-vindo ao Prioriza!",
             "token": token
         })
 
