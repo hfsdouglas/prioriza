@@ -1,9 +1,12 @@
 import os
 from flask import Flask
 from flasgger import Swagger
+from flask_jwt_extended import JWTManager
+from datetime import timedelta
 
 from database.db import db
 from routes.routes import register_routes
+from libs.jwt import jwt_instance
 
 def create_app(test_config=None):
     app = Flask(__name__)
@@ -16,6 +19,12 @@ def create_app(test_config=None):
         'uiversion': 3,
         'specs_route': '/docs/'
     }
+
+    # Configurações do JWT
+    app.config["JWT_SECRET_KEY"] = "prioriza_secret_asdkjfaj293dr012973wejll"
+    app.config["JWT_COOKIE_SECURE"] = True
+    app.config["JWT_TOKEN_LOCATION"] = ["cookies"]
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
     # Caminho absoluto do diretório onde está este arquivo
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -37,6 +46,7 @@ def create_app(test_config=None):
     register_routes(app)
 
     swagger = Swagger(app)
+    jwt = jwt_instance(app)
 
     return app
 
