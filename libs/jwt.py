@@ -1,8 +1,13 @@
 from flask import jsonify
-from flask_jwt_extended import JWTManager; 
+from flask_jwt_extended import JWTManager
+from datetime import timedelta
 
 def jwt_instance(app):
     jwt = JWTManager(app)
+
+    # Configurações do JWT
+    app.config["JWT_SECRET_KEY"] = "prioriza_secret_asdkjfaj293dr012973wejll"
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 
     # Respostas customizadas para erros de JWT
     # Token expirado
