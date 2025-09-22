@@ -2,16 +2,16 @@ from flask import Blueprint, jsonify, request, redirect
 from marshmallow import ValidationError
 from flask_jwt_extended import create_access_token, set_access_cookies, jwt_required
 
-from routes.auth.schemas import LoginSchema
-from routes.auth.schemas import SignInSchema
+from schemas.auth import LoginSchema
+from schemas.auth import SignInSchema
 
 from database.db import db
 
 from models.user import User
 
-auth = Blueprint("auth", __name__, url_prefix="/auth")
+auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
-@auth.route('/login', methods=['POST'])
+@auth_bp.route('/login', methods=['POST'])
 def login():
     schema = LoginSchema()
 
@@ -26,9 +26,10 @@ def login():
         token = create_access_token(
             identity=user.id, 
             additional_claims={
+                "id": user.id,
                 "name": user.name,
                 "email": user.email
-            }
+            },
         )
 
         name = user.name.split(" ")[0].title()
@@ -38,13 +39,11 @@ def login():
             "token": token
         })
 
-        set_access_cookies(response, token)    
-        
         return response
     except ValidationError as error:
         return jsonify(error.messages), 400
 
-@auth.route('/signin', methods=['POST'])
+@auth_bp.route('/signin', methods=['POST'])
 def signin():
     schema = SignInSchema()
 
@@ -63,9 +62,3 @@ def signin():
         return redirect('/login', code=301)
     except ValidationError as error:
         return jsonify(error.messages), 400
-    
-@auth.route("/protected")
-@jwt_required()
-def protected():
-    return jsonify(foo="bar")
-
