@@ -36,5 +36,12 @@ def sample_user(app):
         
         db.session.add(user)
         db.session.commit()
-        
+
+         # refresh para garantir que está salvo e tem ID
+        db.session.refresh(user)
+
+        # expurga da sessão -> agora pode ser usado sem erro
+        db.session.expunge(user)
+
+        # return {"id": user.id, "nome": user.name, "email": user.email, "password": user.password}
         return user
