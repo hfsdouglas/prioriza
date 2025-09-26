@@ -75,3 +75,20 @@ def update_task(task_id):
         })
     except ValidationError as error: 
         return jsonify(error.messages), 400
+    
+@tasks_bp.delete('/tasks/<uuid:task_id>')
+@jwt_required()
+def update_task(task_id):
+    task = Task.query.get(task_id)
+
+    if not task: 
+        return jsonify({
+            "message": "Tarefa não encontrada!"
+        }), 400
+
+    db.session.delete(task)
+    db.session.commit()
+
+    return jsonify({
+        "message": "Tarefa deletada com sucesso!"
+    })
