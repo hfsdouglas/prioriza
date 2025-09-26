@@ -10,4 +10,4 @@ class Task(db.Model):
     user_id = Column(UUID, ForeignKey("users.id"), nullable=False)
     completed = Column(Boolean, default=False, nullable=False)
 
-user = relationship("User", back_populates="tasks")
+    user = relationship("User", back_populates="tasks")

@@ -11,4 +11,4 @@ class User(db.Model):
     password = Column(String(128), nullable=False)
     name = Column(String(100), nullable=False)
 
-tasks = relationship("Task", back_populates="user", cascade="all, delete")
+    tasks = relationship("Task", back_populates="user", cascade="all, delete")
