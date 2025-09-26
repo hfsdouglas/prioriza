@@ -20,12 +20,12 @@ def create_task():
     try:
         data = schema.load(request.json)
 
-        user = User.query.filter_by(id=UUID(data['user_id'])).first()
+        user = User.query.filter_by(id=data['user_id']).first()
 
         if user:
             task = Task(
                 task = data['task'],
-                user_id = UUID(data['user_id'])
+                user_id = data['user_id']
             )
 
             db.session.add(task)
@@ -40,4 +40,4 @@ def create_task():
             }), 400
 
     except ValidationError as error:
-        return jsonify(error.messages)
+        return jsonify(error.messages), 400
