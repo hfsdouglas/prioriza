@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request, redirect
 from marshmallow import ValidationError
-from flask_jwt_extended import create_access_token, set_access_cookies, jwt_required
+from flask_jwt_extended import create_access_token 
 
 from schemas.auth import LoginSchema
 from schemas.auth import SignInSchema
