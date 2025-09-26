@@ -32,7 +32,7 @@ def create_task():
             db.session.commit()
 
             return jsonify({
-                "message": "Usuário cadastrado com sucesso!"
+                "message": "Tarefa cadastrada com sucesso!"
             })
         else:
             return jsonify({
@@ -78,7 +78,7 @@ def update_task(task_id):
     
 @tasks_bp.delete('/tasks/<uuid:task_id>')
 @jwt_required()
-def update_task(task_id):
+def delete_task(task_id):
     task = Task.query.get(task_id)
 
     if not task: 
@@ -109,7 +109,7 @@ def get_task_by_id(task_id):
 
 @tasks_bp.get('/tasks')
 @jwt_required()
-def get_task_by_id():
+def get_tasks():
     task = Task.query.get()
 
     if not task: 
@@ -119,4 +119,16 @@ def get_task_by_id():
 
     return jsonify({
         "data": task
+    })
+
+@tasks_bp.get('/user/<string:user_id>/tasks')
+@jwt_required()
+def get_task_by_user(user_id):
+    tasks = Task.query.filter_by(user_id=UUID(user_id)).all()
+
+    return jsonify({
+        "tasks": [
+            {"id": str(task.id), "task": task.task, "completed": task.completed}
+            for task in tasks
+        ]
     })
