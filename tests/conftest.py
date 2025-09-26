@@ -1,4 +1,5 @@
 import pytest
+from flask_jwt_extended import create_access_token
 
 from server import create_app
 
@@ -45,3 +46,13 @@ def sample_user(app):
 
         # return {"id": user.id, "nome": user.name, "email": user.email, "password": user.password}
         return user
+    
+@pytest.fixture
+def sample_auth_headers(app, sample_user):
+    """Gera um JWT válido para o usuário de teste"""
+    with app.app_context():
+        token = create_access_token(identity=sample_user.id)
+
+    return {
+        "Authorization": f"Bearer {token}"
+    }
