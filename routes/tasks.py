@@ -5,7 +5,7 @@ from uuid import UUID
 
 from database.db import db
 
-from schemas.task import CreateTaskSchema
+from schemas.task import CreateTaskSchema, UpdateTaskSchema
 
 from models.user import User
 from models.tasks import Task
@@ -40,4 +40,38 @@ def create_task():
             }), 400
 
     except ValidationError as error:
+        return jsonify(error.messages), 400
+    
+@tasks_bp.patch('/tasks/<uuid:task_id>')
+@jwt_required()
+def update_task(task_id):
+    schema = UpdateTaskSchema()
+
+    try:
+        data = schema.load(request.json)
+
+        user = User.query.get(data['user_id'])
+
+        if not user:
+            return jsonify({
+                "message": "Usuário não encontrado!"
+            }), 400
+        
+        task = Task.query.get(task_id)
+
+        if not task: 
+            return jsonify({
+                "message": "Tarefa não encontrada!"
+            }), 400
+        
+        task.task = data['task'],
+        task.completed = data['completed']
+        task.user_id = data['user_id']
+
+        db.session.commit()
+
+        return jsonify({
+            "message": "Tarefa atualizada com sucesso!"
+        })
+    except ValidationError as error: 
         return jsonify(error.messages), 400
