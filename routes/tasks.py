@@ -96,7 +96,7 @@ def delete_task(task_id):
 @tasks_bp.get('/tasks/<int:task_id>')
 @jwt_required()
 def get_task_by_id(task_id):
-    task = Task.query.get(task_id)
+    task = Task.query.filter_by(id=task_id).first()
 
     if not task: 
         return jsonify({
@@ -104,21 +104,43 @@ def get_task_by_id(task_id):
         }), 400
 
     return jsonify({
-        "data": task
-    })
+        "task": {
+            "id": str(task.id),
+            "task": task.task,
+            "completed": task.completed,
+            "user": {
+                "id": str(task.user.id),
+                "name": task.user.name
+            }
+        }
+    }), 200
 
 @tasks_bp.get('/tasks')
 @jwt_required()
 def get_tasks():
-    task = Task.query.get()
+    tasks = Task.query.join(User).all()
 
-    if not task: 
+    if not tasks:
         return jsonify({
             "message": "Não há nenhuma tarefa cadastrada no momento!"
-        }), 200
+        })
+
+    tasks_by_user = {}
+
+    for task in tasks:
+        user_name = task.user.name
+
+        if user_name not in tasks_by_user:
+            tasks_by_user[user_name] = []
+
+        tasks_by_user[user_name].append({
+            "id": str(task.id),
+            "task": task.task,
+            "completed": task.completed
+        })
 
     return jsonify({
-        "data": task
+        "tasks": tasks_by_user
     })
 
 @tasks_bp.get('/users/<uuid:user_id>/tasks')
