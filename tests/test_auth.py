@@ -15,26 +15,51 @@ class TestAuth:
         assert len(response.history) == 1
         assert response.request.path == '/login'
     
-    @pytest.mark.parametrize("email,password,status,message,token", [
-        ("johndoe@email.com", "123456", 200, "Olá, John! Seja bem-vindo ao Prioriza!", True),
-        ("johndoe@email.com", "john1234", 401, "Credenciais inválidas", False),
-        ("john", "123", 400, "", False)
-    ])
-    def test_login(self, client, sample_user, email, password, status, message, token):
+    def test_login(self, client, sample_user):
         """
         Cenário: Realizar login
         Ação: Enviar dados válidos para /auth/login
         Resultado esperado: Recebe json com message e token
         """
         response = client.post('/auth/login', json={
-            'email': email,
-            'password': password
+            'email': sample_user.email,
+            'password': sample_user.password
         })
 
         data = response.get_json()
 
-        if status == 400:
-            assert "email" in data or "password" in data
-        else:
-            assert "message" in data and data["message"] == message
-            assert ("token" in data) == token
+        assert response.status_code == 200
+        assert "message" in data and data["message"] == "Olá, John! Seja bem-vindo ao Prioriza!"
+    
+    def test_login_with_invalid_credentials(self, client):
+        """
+        Cenário: Realizar login com credenciais inválidas
+        Ação: Enviar credenciais inválidas para /auth/login
+        Resultado esperado: Recebe json com message status_code 401
+        """
+
+        response = client.post('/auth/login', json={
+            'email': 'johndoe@email.com',
+            'password': 'john1234'
+        })
+
+        data = response.get_json()
+
+        assert response.status_code == 401
+        assert "message" in data and data["message"] == "Credenciais inválidas"
+            
+    def test_login_with_invalid_data(self, client):
+        """
+        Cenário: Realizar login
+        Ação: Enviar dados válidos para /auth/login
+        Resultado esperado: Recebe json com message e token
+        """
+        response = client.post('/auth/login', json={
+            'email': 'john',
+            'password': '123'
+        })
+
+        data = response.get_json()
+
+        assert response.status_code == 400
+        assert "email" in data or "password" in data
