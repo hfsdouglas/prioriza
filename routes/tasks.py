@@ -92,3 +92,31 @@ def update_task(task_id):
     return jsonify({
         "message": "Tarefa deletada com sucesso!"
     })
+
+@tasks_bp.get('/tasks/<uuid:task_id>')
+@jwt_required()
+def get_task_by_id(task_id):
+    task = Task.query.get(task_id)
+
+    if not task: 
+        return jsonify({
+            "message": "Tarefa não encontrada!"
+        }), 400
+
+    return jsonify({
+        "data": task
+    })
+
+@tasks_bp.get('/tasks')
+@jwt_required()
+def get_task_by_id():
+    task = Task.query.get()
+
+    if not task: 
+        return jsonify({
+            "message": "Não há nenhuma tarefa cadastrada no momento!"
+        }), 200
+
+    return jsonify({
+        "data": task
+    })
