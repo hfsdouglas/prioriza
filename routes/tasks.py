@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_current_user
 from marshmallow import ValidationError
 from uuid import UUID
 
@@ -20,12 +20,12 @@ def create_task():
     try:
         data = schema.load(request.json)
 
-        user = User.query.filter_by(id=data['user_id']).first()
+        user = get_current_user()
 
         if user:
             task = Task(
                 task = data['task'],
-                user_id = data['user_id']
+                user_id = user.id
             )
 
             db.session.add(task)
