@@ -42,7 +42,7 @@ def create_task():
     except ValidationError as error:
         return jsonify(error.messages), 400
     
-@tasks_bp.patch('/tasks/<uuid:task_id>')
+@tasks_bp.patch('/tasks/<int:task_id>')
 @jwt_required()
 def update_task(task_id):
     schema = UpdateTaskSchema()
@@ -76,7 +76,7 @@ def update_task(task_id):
     except ValidationError as error: 
         return jsonify(error.messages), 400
     
-@tasks_bp.delete('/tasks/<uuid:task_id>')
+@tasks_bp.delete('/tasks/<int:task_id>')
 @jwt_required()
 def delete_task(task_id):
     task = Task.query.get(task_id)
@@ -93,7 +93,7 @@ def delete_task(task_id):
         "message": "Tarefa deletada com sucesso!"
     })
 
-@tasks_bp.get('/tasks/<uuid:task_id>')
+@tasks_bp.get('/tasks/<int:task_id>')
 @jwt_required()
 def get_task_by_id(task_id):
     task = Task.query.get(task_id)
@@ -121,10 +121,10 @@ def get_tasks():
         "data": task
     })
 
-@tasks_bp.get('/users/<string:user_id>/tasks')
+@tasks_bp.get('/users/<uuid:user_id>/tasks')
 @jwt_required()
 def get_task_by_user(user_id):
-    tasks = Task.query.filter_by(user_id=UUID(user_id)).all()
+    tasks = Task.query.filter_by(user_id=user_id).all()
 
     return jsonify({
         "tasks": [
