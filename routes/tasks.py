@@ -121,7 +121,7 @@ def get_tasks():
         "data": task
     })
 
-@tasks_bp.get('/user/<string:user_id>/tasks')
+@tasks_bp.get('/users/<string:user_id>/tasks')
 @jwt_required()
 def get_task_by_user(user_id):
     tasks = Task.query.filter_by(user_id=UUID(user_id)).all()
