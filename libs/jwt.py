@@ -1,6 +1,11 @@
 from flask import jsonify
 from flask_jwt_extended import JWTManager
 from datetime import timedelta
+from uuid import UUID
+
+from database.db import db
+
+from models.user import User
 
 def jwt_instance(app):
     jwt = JWTManager(app)
@@ -30,5 +35,11 @@ def jwt_instance(app):
         return jsonify({
             "message": "Token não fornecido"
         }), 401
+    
+    @jwt.user_lookup_loader
+    def user_lookup_callback(_jwt_header, jwt_data):
+        identity = jwt_data["sub"]
+
+        return db.session.get(User, UUID(identity))
     
     return jwt
