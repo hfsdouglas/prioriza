@@ -1,7 +1,7 @@
 import pytest
 
 class TestTask:
-    def test_create_task(self, client, sample_user, sample_auth_headers):
+    def test_create_task(self, client, sample_auth_headers):
         """
         Cenário: Cadastro de tarefa
         Ação: Envia informações para /tasks
@@ -11,7 +11,6 @@ class TestTask:
         response = client.post('/tasks', 
             json={
                 "task": "Criar teste de tarefa no prioriza",
-                "user_id": sample_user.id
             }, 
             headers=sample_auth_headers
         )
@@ -19,27 +18,7 @@ class TestTask:
         data = response.get_json()
 
         assert response.status_code == 200
-        assert 'message' in data and data['message'] == 'Usuário cadastrado com sucesso!'
-
-    def test_create_task_with_invalid_user(self, client, sample_auth_headers):
-        """
-        Cenário: Cadastro de tarefa com usuário inválido
-        Ação: Envia informações para /tasks
-        Resultado: Recebe json com informações de usuário inválido 
-        """
-
-        response = client.post('/tasks', 
-            json={
-                "task": "Criar teste de tarefa no prioriza",
-                "user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-            }, 
-            headers=sample_auth_headers
-        )
-
-        data = response.get_json()
-
-        assert response.status_code == 400
-        assert 'message' in data and data['message'] == 'Usuário não encontrado!'
+        assert 'message' in data and data['message'] == 'Tarefa cadastrada com sucesso!'
 
     def test_create_task_with_invalid_data(self, client, sample_auth_headers):
         """
@@ -51,14 +30,53 @@ class TestTask:
         response = client.post('/tasks', 
             json={
                 "task": "",
-                "user_id": "1"
             }, 
             headers=sample_auth_headers
         )
 
         data = response.get_json()
 
-        print(data)
+        assert response.status_code == 400
+        assert "task" in data
+
+    def test_update_task(self, client, sample_user, sample_task, sample_auth_headers):
+        """
+        Cenário: Atualiza de tarefa
+        Ação: Envia informações para /tasks com método HTTP Patch
+        Resultado: Recebe json com informações de sucesso 
+        """
+
+        response = client.patch(f'/tasks/{sample_task.id}', 
+            json={
+                "task": "Texto para teste de atualização de task",
+                "user_id": sample_user.id,
+                "completed": 1
+            },
+            headers=sample_auth_headers
+        )
+
+        data = response.get_json()
+
+        assert response.status_code == 200
+        assert 'message' in data and data['message'] == 'Tarefa atualizada com sucesso!'
+
+    def test_update_task_with_invalid_data(self, client, sample_task, sample_auth_headers):
+        """
+        Cenário: Atualização de tarefa com dados inválidos
+        Ação: Envia informações para /tasks com HTTP Method Patch
+        Resultado: Recebe json de mensagens com detalhes dos dados incorretos 
+        """
+
+        response = client.patch(f'/tasks/{sample_task.id}', 
+            json={
+                "user_id": 1,
+                "task": "",
+                "completed": "falso" 
+            },
+            headers=sample_auth_headers
+        )
+
+        data = response.get_json()
 
         assert response.status_code == 400
-        assert "task" in data or "user_id" in data
+        assert 'user_id' in data or 'task' in data or 'completed' in data
