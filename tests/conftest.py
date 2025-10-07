@@ -5,6 +5,7 @@ from server import create_app
 
 from database.db import db
 from models.user import User
+from models.tasks import Task
 
 @pytest.fixture
 def app():
@@ -56,3 +57,18 @@ def sample_auth_headers(app, sample_user):
     return {
         "Authorization": f"Bearer {token}"
     }
+
+@pytest.fixture
+def sample_task(app, sample_user):
+    with app.app_context():
+        task = Task(
+            task="Tarefa de teste para teste",
+            user_id=sample_user.id
+        )
+
+        db.session.add(task)
+        db.session.commit()
+
+        db.session.refresh(task)
+
+        return task
