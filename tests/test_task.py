@@ -96,3 +96,19 @@ class TestTask:
 
         assert response.status_code == 200
         assert "message" in data and data['message'] == 'Tarefa deletada com sucesso!'
+
+    def test_delete_task_with_invalid_id(self, client, sample_auth_headers):
+        """
+        Cenário: Tenta deletar uma tarefa com id inválido
+        Ação: Envia informações para /tasks com método HTTP Delete
+        Resultado: Recebe json com informações de tarefa não encontrada 
+        """
+
+        response = client.delete('/tasks/01226', 
+            headers=sample_auth_headers
+        )
+
+        data = response.get_json()
+
+        assert response.status_code == 400
+        assert "message" in data and data['message'] == 'Tarefa não encontrada!'
