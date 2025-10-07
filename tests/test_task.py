@@ -80,3 +80,19 @@ class TestTask:
 
         assert response.status_code == 400
         assert 'user_id' in data or 'task' in data or 'completed' in data
+
+    def test_delete_task(self, client, sample_task, sample_auth_headers):
+        """
+        Cenário: Deleta uma tarefa
+        Ação: Envia informações para /tasks com método HTTP Patch
+        Resultado: Recebe json com informações de sucesso 
+        """
+
+        response = client.delete(f'/tasks/{sample_task.id}', 
+            headers=sample_auth_headers
+        )
+
+        data = response.get_json()
+
+        assert response.status_code == 200
+        assert "message" in data and data['message'] == 'Tarefa deletada com sucesso!'
