@@ -79,7 +79,7 @@ def update_task(task_id):
 @tasks_bp.delete('/tasks/<int:task_id>')
 @jwt_required()
 def delete_task(task_id):
-    task = Task.query.get(task_id)
+    task = Task.query.filter_by(id=task_id).first()
 
     if not task: 
         return jsonify({
