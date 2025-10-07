@@ -125,22 +125,22 @@ def get_tasks():
             "message": "Não há nenhuma tarefa cadastrada no momento!"
         })
 
-    tasks_by_user = {}
+    all_tasks_by_user = {}
 
     for task in tasks:
         user_name = task.user.name
 
-        if user_name not in tasks_by_user:
-            tasks_by_user[user_name] = []
+        if user_name not in all_tasks_by_user:
+            all_tasks_by_user[user_name] = []
 
-        tasks_by_user[user_name].append({
+        all_tasks_by_user[user_name].append({
             "id": str(task.id),
             "task": task.task,
             "completed": task.completed
         })
 
     return jsonify({
-        "tasks": tasks_by_user
+        "tasks": all_tasks_by_user
     })
 
 @tasks_bp.get('/users/<uuid:user_id>/tasks')
