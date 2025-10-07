@@ -112,3 +112,29 @@ class TestTask:
 
         assert response.status_code == 400
         assert "message" in data and data['message'] == 'Tarefa não encontrada!'
+
+
+    def test_get_tasks(self, client, sample_task, sample_auth_headers):
+        """
+        Cenário: Busca por todas as tarefas
+        Ação: Envia informações para /tasks
+        Resultado: Recebe json com informações de tarefa não encontrada 
+        """ 
+
+        response = client.get('/tasks',
+            headers=sample_auth_headers
+        )
+
+        data = response.get_json()
+
+        assert response.status_code == 200
+        assert 'tasks' in data
+        assert isinstance(data, list)
+
+        if data:
+            task = data['tasks'][0]
+
+            assert 'id' in task
+            assert 'task' in task
+            assert 'completed' in task
+            assert 'user_id' in task
