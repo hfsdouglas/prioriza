@@ -36,13 +36,13 @@ def create_task():
             })
         else:
             return jsonify({
-                "message": "Usuário não encontrado!"
+                "message": "Usuário não está logado!"
             }), 400
 
     except ValidationError as error:
         return jsonify(error.messages), 400
     
-@tasks_bp.patch('/tasks/<int:task_id>')
+@tasks_bp.patch('/tasks/<task_id>')
 @jwt_required()
 def update_task(task_id):
     schema = UpdateTaskSchema()
@@ -50,21 +50,21 @@ def update_task(task_id):
     try:
         data = schema.load(request.json)
 
-        user = User.query.get(data['user_id'])
+        user = User.query.filter_by(id=data['user_id']).first()
 
         if not user:
             return jsonify({
                 "message": "Usuário não encontrado!"
             }), 400
         
-        task = Task.query.get(task_id)
+        task = Task.query.filter_by(id=task_id).first()
 
         if not task: 
             return jsonify({
                 "message": "Tarefa não encontrada!"
             }), 400
         
-        task.task = data['task'],
+        task.task = data['task']
         task.completed = data['completed']
         task.user_id = data['user_id']
 
