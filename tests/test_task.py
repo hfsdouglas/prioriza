@@ -169,3 +169,24 @@ class TestTask:
             assert 'id' in task
             assert 'description' in task
             assert 'completed' in task
+
+    def test_get_task_by_id(self, client, sample_task, sample_auth_headers):
+        """
+        Cenário: Busca por todas as tarefas
+        Ação: Envia informações para /tasks
+        Resultado: Recebe json com informações de tarefa não encontrada 
+        """ 
+
+        response = client.get(f'/tasks/{sample_task.id}',
+            headers=sample_auth_headers
+        )
+
+        data = response.get_json()
+
+        assert response.status_code == 200
+        assert isinstance(data, dict)
+
+        if data:
+            assert 'id' in data
+            assert 'description' in data
+            assert 'completed' in data
