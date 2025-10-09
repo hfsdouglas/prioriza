@@ -128,13 +128,22 @@ class TestTask:
         data = response.get_json()
 
         assert response.status_code == 200
-        assert 'tasks' in data
         assert isinstance(data, list)
 
         if data:
-            task = data['tasks'][0]
+            user = data[0]
 
-            assert 'id' in task
-            assert 'task' in task
-            assert 'completed' in task
-            assert 'user_id' in task
+            assert 'user_id' in user
+            assert 'user_name' in user
+            assert 'user_email' in user
+            assert 'user_tasks' in user
+
+            assert isinstance(user['user_tasks'], list)
+
+            if user['user_tasks']:
+                task = user['user_tasks'][0]
+
+                assert 'task_id' in task
+                assert 'description' in task
+                assert 'completed' in task
+                
