@@ -17,14 +17,14 @@ def jwt_instance(app):
     # Respostas customizadas para erros de JWT
     # Token expirado
     @jwt.expired_token_loader
-    def expired_token_callback():
+    def expired_token_callback(jwt_header, jwt_payload):
         return jsonify({
             "message": "Token expirado, faça login novamente"
         }), 401
 
     # Token inválido (assinatura inválida, formato errado, etc.)
     @jwt.invalid_token_loader
-    def invalid_token_callback():
+    def invalid_token_callback(error):
         return jsonify({
             "message": "Token inválido"
         }), 401
@@ -37,7 +37,7 @@ def jwt_instance(app):
         }), 401
     
     @jwt.user_lookup_loader
-    def user_lookup_callback(_jwt_header, jwt_data):
+    def user_lookup_callback(jwt_header, jwt_data):
         identity = jwt_data["sub"]
 
         return db.session.get(User, UUID(identity))
