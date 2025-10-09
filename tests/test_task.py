@@ -118,7 +118,7 @@ class TestTask:
         """
         Cenário: Busca por todas as tarefas
         Ação: Envia informações para /tasks
-        Resultado: Recebe json com informações de tarefa não encontrada 
+        Resultado: Recebe json com informações de todas as tarefas
         """ 
 
         response = client.get('/tasks',
@@ -149,9 +149,9 @@ class TestTask:
     
     def test_get_tasks_by_user(self, client, sample_task, sample_user, sample_auth_headers):
         """
-        Cenário: Busca por todas as tarefas
+        Cenário: Busca por todas as tarefas atreladas à um usuário
         Ação: Envia informações para /tasks
-        Resultado: Recebe json com informações de tarefa não encontrada 
+        Resultado: Recebe json com informações das tarefas do usuário 
         """ 
 
         response = client.get(f'/users/{sample_user.id}/tasks',
@@ -172,9 +172,9 @@ class TestTask:
 
     def test_get_task_by_id(self, client, sample_task, sample_auth_headers):
         """
-        Cenário: Busca por todas as tarefas
+        Cenário: Busca por uma tarefa através do id
         Ação: Envia informações para /tasks
-        Resultado: Recebe json com informações de tarefa não encontrada 
+        Resultado: Recebe json com informações da tarefa
         """ 
 
         response = client.get(f'/tasks/{sample_task.id}',
