@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import jwt_required, get_current_user
+from sqlalchemy.orm import selectinload
 from marshmallow import ValidationError
 from uuid import UUID
 
@@ -104,53 +105,48 @@ def get_task_by_id(task_id):
         }), 400
 
     return jsonify({
-        "task": {
-            "id": str(task.id),
-            "task": task.task,
-            "completed": task.completed,
-            "user": {
-                "id": str(task.user.id),
-                "name": task.user.name
-            }
+        "id": str(task.id),
+        "description": task.task,
+        "completed": task.completed,
+        "user": {
+            "id": str(task.user.id),
+            "name": task.user.name
         }
     }), 200
 
 @tasks_bp.get('/tasks')
 @jwt_required()
 def get_tasks():
-    tasks = Task.query.join(User).all()
+    users = (
+        User.query
+            .options(selectinload(User.tasks))
+            .all()
+    )
 
-    if not tasks:
-        return jsonify({
-            "message": "Não há nenhuma tarefa cadastrada no momento!"
+    data = []
+
+    for user in users: 
+        data.append({
+            "user_id": user.id,
+            "user_name": user.name, 
+            "user_email": user.email,
+            "user_tasks": [
+                {
+                    "task_id": task.id, 
+                    "description": task.task, 
+                    "completed": task.completed
+                } for task in user.tasks 
+            ]
         })
 
-    all_tasks_by_user = {}
-
-    for task in tasks:
-        user_name = task.user.name
-
-        if user_name not in all_tasks_by_user:
-            all_tasks_by_user[user_name] = []
-
-        all_tasks_by_user[user_name].append({
-            "id": str(task.id),
-            "task": task.task,
-            "completed": task.completed
-        })
-
-    return jsonify({
-        "tasks": all_tasks_by_user
-    })
+    return jsonify(data)
 
 @tasks_bp.get('/users/<uuid:user_id>/tasks')
 @jwt_required()
 def get_task_by_user(user_id):
     tasks = Task.query.filter_by(user_id=user_id).all()
 
-    return jsonify({
-        "tasks": [
-            {"id": str(task.id), "task": task.task, "completed": task.completed}
-            for task in tasks
-        ]
-    })
+    return jsonify([
+        {"id": str(task.id), "description": task.task, "completed": task.completed}
+        for task in tasks
+    ])
