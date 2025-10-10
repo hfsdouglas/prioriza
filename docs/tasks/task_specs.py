@@ -247,3 +247,36 @@ class Task_Specs():
                 }
             }
         }
+    
+    def delete_task_specs():
+        return {
+            'parameters': [
+                {
+                    'name': 'task_id',
+                    'in': 'path',
+                    'required': True,
+                    'schema': {
+                        'type': 'int',
+                        'example': '1'
+                    }
+                },
+            ],
+            'responses': {
+                200: {
+                    'description': 'Caso a tarefa seja deletada, retorna mensagem de sucesso.',
+                    'examples': {
+                        'application/json': {
+                            'message': 'Tarefa deletada com sucesso.'
+                        }
+                    }
+                },
+                404: {
+                    'description': 'Caso a tarefa não seja encontrada, retorna mensagem.',
+                    'examples': {
+                        'application/json': {
+                            'message': 'Tarefa não encontrada!'
+                        }
+                    }
+                }
+            }
+        }
