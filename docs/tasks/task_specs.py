@@ -123,3 +123,46 @@ class Task_Specs():
                 }
             }
         }
+    
+    def get_tasks_specs():
+        return {
+            'responses': {
+                200: {
+                    'description': 'Retorna todas as tarefas de cada usuário.',
+                    'examples': {
+                        'application/json': [
+                            {
+                                'user_id': '1',
+                                'user_name': 'João da Silva',
+                                'user_email': 'joao@exemplo.com',
+                                'user_tasks': [
+                                    {
+                                        'task_id': '101',
+                                        'description': 'Finalizar relatório financeiro do mês',
+                                        'completed': False
+                                    },
+                                    {
+                                        'task_id': '102',
+                                        'description': 'Agendar reunião com a diretoria',
+                                        'completed': True
+                                    }
+                                ]
+                            },
+                            {
+                                'user_id': '2',
+                                'user_name': 'Maria Souza',
+                                'user_email': 'maria@exemplo.com',
+                                'user_tasks': [
+                                    {
+                                        'task_id': '103',
+                                        'description': 'Revisar plano de marketing',
+                                        'completed': False
+                                    }
+                                ]
+                            }
+                        ]
+
+                    }
+                }
+            }
+        }
