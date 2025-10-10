@@ -200,3 +200,50 @@ class Task_Specs():
                 }
             }
         }
+    
+    def get_task_by_user_specs(): 
+        return {
+            'parameters': [
+                {
+                    'name': 'user_id',
+                    'in': 'path',
+                    'required': True,
+                    'schema': {
+                        'type': 'uuid',
+                        'example': '7b0d9f92-d0bf-4b1e-abe0-eb6829167757'
+                    }
+                },
+            ],
+            'responses': {
+                200: {
+                    'description': 'Retorna todas as tarefas de um usuário específico.',
+                    'examples': {
+                        'application/json': [
+                            {
+                                'id': '101',
+                                'description': 'Finalizar relatório financeiro do mês',
+                                'completed': False
+                            },
+                            {
+                                'id': '102',
+                                'description': 'Agendar reunião com a diretoria',
+                                'completed': True
+                            },
+                            {
+                                'id': '103',
+                                'description': 'Revisar plano de marketing',
+                                'completed': False
+                            }
+                        ]
+                    }
+                },
+                404: {
+                    'description': 'Caso o usuário não seja encontrado, retorna mensagem.',
+                    'examples': {
+                        'application/json': {
+                            'message': 'Usuário não encontrado!'
+                        }
+                    }
+                }
+            }
+        }
