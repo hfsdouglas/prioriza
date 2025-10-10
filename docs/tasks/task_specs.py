@@ -50,13 +50,8 @@ class Task_Specs():
                     'in': 'path',
                     'required': True,
                     'schema': {
-                        'type': 'object',
-                        'properties': {
-                            'task': {
-                                'type': 'int',
-                                'example': '1'
-                            }
-                        }
+                        'type': 'int',
+                        'example': '1'
                     }
                 },
                 {
@@ -162,6 +157,45 @@ class Task_Specs():
                             }
                         ]
 
+                    }
+                }
+            }
+        }
+    
+    def get_task_specs():
+        return {
+            'parameters': [
+                {
+                    'name': 'task_id',
+                    'in': 'path',
+                    'required': True,
+                    'schema': {
+                        'type': 'int',
+                        'example': '1'
+                    }
+                }
+            ],
+            'responses': {
+                200: {
+                    'description': 'Retorna uma tarefa, de acordo com o id enviado.',
+                    'examples': {
+                        'application/json': {
+                            'id': '101',
+                            'description': 'Finalizar relatório financeiro do mês',
+                            'completed': False,
+                            'user': {
+                                'id': '1',
+                                'name': 'João da Silva'
+                            }
+                        }
+                    }
+                },
+                404: {
+                    'description': 'Caso a tarefa não seja encontrada, retorna mensagem.',
+                    'examples': {
+                        'application/json': {
+                            'message': 'Tarefa não encontrada!'
+                        }
                     }
                 }
             }
