@@ -1,9 +1,9 @@
 import os
 from flask import Flask
-from flasgger import Swagger
 
 from database.db import db
 from libs.jwt import jwt_instance
+from libs.swagger import swagger_instance
 
 from routes.auth import auth_bp
 from routes.tasks import tasks_bp
@@ -11,16 +11,8 @@ from routes.tasks import tasks_bp
 def create_app(test_config=None):
     app = Flask(__name__)
     
-    jwt = jwt_instance(app)
-
-    # Configuração do Swagger
-    app.config['SWAGGER'] = {
-        'title': 'Prioriza API',
-        'description': 'Prioriza é uma API simples e poderosa para gerenciamento de tarefas. Com ela, você pode cadastrar usuários, criar e organizar tarefas, definir prioridades e acompanhar o progresso diretamente na sua aplicação. ⚡📂',
-        'version': '1.0.0',
-        'uiversion': 3,
-        'specs_route': '/docs/'
-    }
+    jwt_instance(app)
+    swagger_instance(app)
 
     # Caminho absoluto do diretório onde está este arquivo
     BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -38,8 +30,6 @@ def create_app(test_config=None):
         app.config.update(test_config)
 
     db.init_app(app)
-
-    swagger = Swagger(app)
 
     # Registra os blueprints
     app.register_blueprint(auth_bp)
