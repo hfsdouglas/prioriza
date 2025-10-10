@@ -15,7 +15,7 @@ from models.user import User
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 @auth_bp.route('/login', methods=['POST'])
-@swag_from(AuthSpecs.login_specs)
+@swag_from(AuthSpecs.login_specs())
 def login():
     schema = LoginSchema()
 
@@ -48,7 +48,7 @@ def login():
         return jsonify(error.messages), 400
 
 @auth_bp.route('/signin', methods=['POST'])
-@swag_from(AuthSpecs.signin_specs)
+@swag_from(AuthSpecs.signin_specs())
 def signin():
     schema = SignInSchema()
 
