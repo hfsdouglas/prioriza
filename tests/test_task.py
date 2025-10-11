@@ -110,7 +110,7 @@ class TestTask:
 
         data = response.get_json()
 
-        assert response.status_code == 400
+        assert response.status_code == 404
         assert "message" in data and data['message'] == 'Tarefa não encontrada!'
 
 
